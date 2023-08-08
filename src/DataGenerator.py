@@ -18,7 +18,7 @@ class DataGenerator:
 
         self.phone_numbers = list() #Lista di tutti i numeri di telefono generati. Servirà a generare le chiamate
 
-        self.data_path = data_path
+        self.data_path = data_path #Path in cui sono scritti i file csv
 
         Faker.seed(0)
         self.fake = Faker('it_IT')
@@ -73,6 +73,8 @@ class DataGenerator:
             call.append(called)
             call.append(random.randint(1, self.cells_set_size+1))
             
+            #Crea un oggetto datetime con data nel range specificato,
+            #e poi ne crea un altro sommando una durata casuale tra il range specificato
             begin_date_time = self.fake.date_time_between_dates(self.call_begin_range, self.call_end_range)
             duration = random.randint(self.calls_min_duration, self.calls_max_duration)
             end_date_time = begin_date_time + timedelta(seconds=duration)
