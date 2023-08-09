@@ -26,6 +26,7 @@ class DataGenerator:
     def generate_people(self):
         #NUMERO, NOME, COGNOME
         people = list()
+        people.append(["NUMERO", "NOME", "COGNOME"]) #Headers
         for i in range(self.people_set_size):
             person = list()
 
@@ -48,6 +49,7 @@ class DataGenerator:
     def generate_cells(self):
         #ID, CITTA, INDIRIZZO
         cells = list()
+        cells.append(["ID", "CITTA", "INDIRIZZO"]) #Headers
         for i in range(1, self.cells_set_size+1):
             cell = list()
             cell.append(i)
@@ -60,10 +62,10 @@ class DataGenerator:
     def generate_calls(self):
         #ID, CALLER, CALLED, CELL_ID, BEGIN_TIMESTAMP, END_TIMESTAMP
         calls = list()
+        calls.append(["ID", "CALLER", "CALLED", "CELL_ID", "BEGIN_TIMESTAMP", "END_TIMESTAMP"])
         for i in range(1, self.calls_set_size+1):
             call = list()
             call.append(i)
-            
             caller = random.choice(self.phone_numbers)
             while True:
                 called = random.choice(self.phone_numbers)
@@ -92,10 +94,13 @@ class DataGenerator:
 
     def write_csv_file(self, filename, list_to_write):
         with open(self.data_path+filename+".csv", "w") as file:
+            print(list_to_write[0])
             for record in list_to_write:
                 record = [str(value) for value in record]
                 newLine = ",".join(record)+"\n"
+                print(newLine)
                 file.write(newLine)
+            file.close()
             
 
     def generate(self):
@@ -107,5 +112,5 @@ class DataGenerator:
         self.write_csv_file("calls", self.generate_calls())
 
 if __name__ == "__main__":
-    generator = DataGenerator(calls_set_size=50000, people_set_size=2500, cells_set_size=2500)
+    generator = DataGenerator(calls_set_size=50000, people_set_size=10000, cells_set_size=10000)
     generator.generate()
