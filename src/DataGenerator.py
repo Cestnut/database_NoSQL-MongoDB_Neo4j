@@ -109,7 +109,7 @@ class DataGenerator:
 
     def write_csv_file(self, filename, list_to_write):
         with open(self.data_path+filename+".csv", "w") as file:
-            print("Scrivendo il file {}".format(filename))    
+            print("Scrivendo il file {}\n\n".format(filename))    
             for record in list_to_write:
                 record = [str(value) for value in record]
                 newLine = ",".join(record)+"\n"
