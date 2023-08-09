@@ -26,7 +26,7 @@ class DataGenerator:
     def generate_people(self, progress_info=False):
         #NUMERO, NOME, COGNOME
         people = list()
-        people.append(["NUMERO", "NOME", "COGNOME"]) #Headers
+        people.append(["NUMBER", "FIRST_NAME", "LAST_NAME"]) #Headers
         for i in range(self.people_set_size):
             person = list()
 
@@ -54,7 +54,7 @@ class DataGenerator:
     def generate_cells(self, progress_info=False):
         #ID, CITTA, INDIRIZZO
         cells = list()
-        cells.append(["ID", "CITTA", "INDIRIZZO"]) #Headers
+        cells.append(["ID", "CITY", "ADDRESS"]) #Headers
         for i in range(1, self.cells_set_size+1):
             cell = list()
             cell.append(i)
@@ -83,7 +83,7 @@ class DataGenerator:
                     break
             call.append(caller)
             call.append(called)
-            call.append(random.randint(1, self.cells_set_size+1))
+            call.append(random.randint(1, self.cells_set_size))
             
             #Crea un oggetto datetime con data nel range specificato,
             #e poi ne crea un altro sommando una durata casuale tra il range specificato
@@ -127,7 +127,7 @@ class DataGenerator:
         self.write_csv_file("calls", self.generate_calls(progress_info=calls_progress_info))
 
 if __name__ == "__main__":
-    generator = DataGenerator(calls_set_size=50000, people_set_size=10000, cells_set_size=10000)
+    generator = DataGenerator(calls_set_size=10, people_set_size=10, cells_set_size=10)
     
-    generator.generate(people_progress_info=True, 
+    generator.generate(people_progress_info=True,
                        cells_progress_info=True, calls_progress_info=True)
