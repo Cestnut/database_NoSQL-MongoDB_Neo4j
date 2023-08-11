@@ -2,10 +2,11 @@ from faker import Faker
 import random
 from datetime import datetime, timedelta
 import os
+import utils
 
 class DataGenerator:
-    def __init__(self, calls_set_size = 1000, people_set_size = 50, cells_set_size = 50, 
-                 calls_min_duration=30, calls_max_duration=3600, data_path="../csv/"):
+    def __init__(self, root_path, calls_set_size = 1000, people_set_size = 50, cells_set_size = 50, 
+                 calls_min_duration=30, calls_max_duration=3600):
         
         self.calls_set_size = calls_set_size #Numero di chiamate
         self.people_set_size = people_set_size
@@ -18,7 +19,7 @@ class DataGenerator:
 
         self.phone_numbers = list() #Lista di tutti i numeri di telefono generati. Servirà a generare le chiamate
 
-        self.data_path = data_path #Path in cui sono scritti i file csv
+        self.data_path = root_path+"/csv/" #Path in cui sono scritti i file csv
 
         Faker.seed(0)
         self.fake = Faker('it_IT')
@@ -64,8 +65,8 @@ class DataGenerator:
             cells.append(cell)
 
             if progress_info:
-                if (i+1) % (self.cells_set_size//10) == 0:
-                    percentage = ((i+1)/self.cells_set_size)*100
+                if i % (self.cells_set_size//10) == 0:
+                    percentage = (i/self.cells_set_size)*100
                     print("Generazione celle: {}%".format(percentage))
         return cells
 
@@ -101,33 +102,16 @@ class DataGenerator:
             calls.append(call)
 
             if progress_info:
-                if (i+1) % (self.calls_set_size//10) == 0:
-                    percentage = ((i+1)/self.calls_set_size)*100
+                if i % (self.calls_set_size//10) == 0:
+                    percentage = (i/self.calls_set_size)*100
                     print("Generazione chiamate: {}%".format(percentage))
         return calls
-
-
-    def write_csv_file(self, filename, list_to_write):
-        with open(self.data_path+filename+".csv", "w") as file:
-            print("Scrivendo il file {}\n\n".format(filename))    
-            for record in list_to_write:
-                record = [str(value) for value in record]
-                newLine = ",".join(record)+"\n"
-                file.write(newLine)
-            file.close()
-            
 
     def generate(self, people_progress_info=False, cells_progress_info=False, 
                  calls_progress_info=False):
         if not os.path.exists(self.data_path):
             os.makedirs(self.data_path)
         
-        self.write_csv_file("people", self.generate_people(progress_info=people_progress_info))
-        self.write_csv_file("cells", self.generate_cells(progress_info=cells_progress_info))
-        self.write_csv_file("calls", self.generate_calls(progress_info=calls_progress_info))
-
-if __name__ == "__main__":
-    generator = DataGenerator(calls_set_size=10, people_set_size=10, cells_set_size=10)
-    
-    generator.generate(people_progress_info=True,
-                       cells_progress_info=True, calls_progress_info=True)
+        utils.write_csv(self.data_path+"/people", self.generate_people(progress_info=people_progress_info))
+        utils.write_csv(self.data_path+"cells", self.generate_cells(progress_info=cells_progress_info))
+        utils.write_csv(self.data_path+"calls", self.generate_calls(progress_info=calls_progress_info))
