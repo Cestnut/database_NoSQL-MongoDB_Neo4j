@@ -1,6 +1,5 @@
 from pymongo import MongoClient
 import csv
-import sys
 
 class MongoInsert:
     def __init__(self, root_path="/home/giov/database_NoSQL-MongoDB_Neo4j", 
