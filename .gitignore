@@ -1,8 +1,4 @@
-bin/
-include/
-lib/
-lib64/
-lib64
-pyvenv.cfg
-
+venv/
 csv/
+results/
+__pycache__
