@@ -1,8 +1,8 @@
 from neo4j import GraphDatabase
 
 class NeoInsert:
-    def __init__(self, host="localhost", port="7687"):
-        self.driver = GraphDatabase.driver("bolt://{}:{}".format(host,port))
+    def __init__(self, database):
+        self.database = database
 
     def init_queries(self):
         insert = """
@@ -44,9 +44,6 @@ class NeoInsert:
     def insert_all_data(self, debug=True):
         self.init_queries()
         for query in self.queries:
-            result=self.driver.execute_query(query)
+            result=self.database.execute_query(query)
             if debug:
                 print(result.records)
-
-neo_inserter = NeoInsert()
-neo_inserter.insert_all_data(debug=True)

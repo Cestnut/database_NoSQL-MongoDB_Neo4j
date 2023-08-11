@@ -2,9 +2,10 @@ from neo4j import GraphDatabase
 from time import process_time_ns
 
 class NeoRead:
-    def __init__(self, host="localhost", port="7687"):
-        self.driver = GraphDatabase.driver("bolt://{}:{}".format(host,port))
-    
+    def __init__(self, begin, end, city, database):
+        self.database = database
+        self.init_queries(begin, end, city)
+
     def init_queries(self, begin, end, city):
         read_queries = [
         """MATCH (call:Call) 
@@ -39,22 +40,7 @@ class NeoRead:
     #Ritorna il tempo di esecuzione della query in millisecondi
     def read_query(self, query):
         begin_time = process_time_ns()
-        result = self.driver.execute_query(query)
+        result = self.database.execute_query(query)
         end_time = process_time_ns()
         time_elapsed = (end_time-begin_time)//(10**6)
         return time_elapsed
-    
-    def all_read_queries(self, begin, end, city):
-        self.init_queries(begin, end, city)
-        times_list = list()
-        for query in self.read_queries:
-            times_list.append(self.read_query(query))
-        return times_list    
-
-begin = 0
-end = 2000000000000000
-city = "Imperia"
-
-neo_reader = NeoRead()
-times = neo_reader.all_read_queries(begin,end,city)
-print(times)
