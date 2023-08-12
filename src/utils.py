@@ -7,4 +7,5 @@ def write_csv(file_path, csv_list):
                 record = [str(value) for value in record]
                 newLine = ",".join(record)+"\n"
                 file.write(newLine)
+            print("Scritto il file {}\n\n".format(file_path))    
             file.close()
