@@ -1,11 +1,12 @@
 from neo4j import GraphDatabase
 
 class NeoInsert:
-    def __init__(self, database):
-        self.database = database
+    def __init__(self, driver):
+        self.driver = driver
 
     def init_queries(self):
         insert = """
+        USING PERIODIC COMMIT 1000
         LOAD CSV WITH HEADERS FROM 'file:///{}' AS row
         MERGE (e:{} {})
         RETURN count(e)
@@ -22,6 +23,7 @@ class NeoInsert:
 
 
         create_caller_called_relationship = """
+        USING PERIODIC COMMIT 1000
         LOAD CSV WITH HEADERS FROM 'file:///calls.csv' AS row
         MATCH (c:Call {ID: toInteger(row.ID)})
         MATCH (p1:Person {number:toInteger(row.CALLER)})
@@ -31,6 +33,7 @@ class NeoInsert:
         RETURN count(row);"""
 
         create_cells_relationsip = """
+        USING PERIODIC COMMIT 1000
         LOAD CSV WITH HEADERS FROM 'file:///calls.csv' AS row
         MATCH (call:Call {ID: toInteger(row.ID)})
         MATCH (cell:Cell {ID:toInteger(row.CELL_ID)})
@@ -38,12 +41,25 @@ class NeoInsert:
         MERGE (call)-[:SOURCE]->(cell)
         RETURN count(row);"""
 
+        create_person_index = "CREATE INDEX person_range_index_number FOR (p:Person) ON (p.number)"
+        create_cell_index = "CREATE INDEX cell_range_index_ID FOR (c:Cell) ON (c.ID)"
+        create_call_index = "CREATE INDEX call_range_index_ID FOR (c:Call) ON (c.ID)"
+
+        self.create_index_queries = [create_person_index, create_cell_index, create_call_index]
+
         self.queries = [insert_people, insert_cells, insert_calls, 
                 create_caller_called_relationship, create_cells_relationsip]
 
     def insert_all_data(self, debug=True):
         self.init_queries()
-        for query in self.queries:
-            result=self.database.execute_query(query)
-            if debug:
-                print(result.records)
+
+        with self.driver.session() as session:
+            if debug: print("Creando gli indici")
+            for query in self.create_index_queries:
+                session.run(query)
+            
+            if debug: print("Inserendo i dati")
+            for query in self.queries:
+                result=session.run(query)
+                if debug:
+                    print(result.records)
