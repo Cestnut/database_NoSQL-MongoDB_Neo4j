@@ -146,4 +146,5 @@ if __name__ == "__main__":
     data_generator = DataGenerator(utils.root_path, people_set_size, cells_set_size, calls_set_size,
                                    begin_date, end_date,
                                    calls_min_duration, calls_max_duration)
-    data_generator.generate()
+    
+    data_generator.generate(people_progress_info=True, cells_progress_info=True, calls_progress_info=True)
