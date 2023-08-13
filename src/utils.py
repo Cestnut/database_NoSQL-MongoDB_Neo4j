@@ -1,3 +1,4 @@
+from datetime import datetime
 root_path = "/home/giov/database_NoSQL-MongoDB_Neo4j"
 
 def write_csv(file_path, csv_list):
@@ -9,3 +10,8 @@ def write_csv(file_path, csv_list):
                 file.write(newLine)
             print("Scritto il file {}\n\n".format(file_path))    
             file.close()
+
+#Ritorna oggetto datetime dalla string (formato YYYY/MM/DD)
+def parse_date(date_string):
+    date_string = [int(val) for val in date_string.split("/")]
+    return datetime(date_string[0], date_string[1], date_string[2])
