@@ -33,18 +33,25 @@ class MongoInsert:
             
         if debug:
             print("Popolata la collezione {}\n\n".format(collection_name))
+    
+    def clear_database(self, debug):
+        for collection_name in self.database.list_collection_names():
+            result = self.database[collection_name].delete_many({})
+            if debug:
+                print("Eliminati {} documenti dalla collection {}".format(result.deleted_count, collection_name))
 
     def insert_all_data(self, debug = True):
 
-        people_collection = self.database["people"]
-        people_collection.create_index([("NUMBER", pymongo.DESCENDING)])
-        
-        cells_collection = self.database["cells"]
-        cells_collection.create_index([("ID", pymongo.DESCENDING)])
-        
-        calls_collection = self.database["calls"]
-        calls_collection.create_index([("ID", pymongo.DESCENDING)])
+        self.clear_database(debug)
 
+        people_collection = self.database["people"]
+        cells_collection = self.database["cells"]
+        calls_collection = self.database["calls"]
+
+        if debug: print("Creando gli indici")
+        people_collection.create_index("NUMBER", unique=True)
+        cells_collection.create_index("ID", unique=True)
+        calls_collection.create_index("ID", unique=True)
 
         self.insert_many(self.root_path+"/csv/people.csv", people_collection, "people", debug)
         self.insert_many(self.root_path+"/csv/cells.csv", cells_collection, "cells", debug)
