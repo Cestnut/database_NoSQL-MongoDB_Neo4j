@@ -54,7 +54,6 @@ def write_results(dbms, times):
 
     #Controlla se ci siano altri campi oltre agli header
     if len(no_cache_times) > 1:
-        print(no_cache_times)
         utils.write_csv(results_path+"/nocache", no_cache_times)
     
     #Controlla se ci siano altri campi oltre agli header
