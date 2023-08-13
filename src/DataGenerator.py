@@ -2,6 +2,7 @@ from faker import Faker
 import random
 from datetime import datetime, timedelta
 import os
+import argparse
 import utils
 
 class DataGenerator:
@@ -115,3 +116,18 @@ class DataGenerator:
         utils.write_csv(self.data_path+"/people", self.generate_people(progress_info=people_progress_info))
         utils.write_csv(self.data_path+"cells", self.generate_cells(progress_info=cells_progress_info))
         utils.write_csv(self.data_path+"calls", self.generate_calls(progress_info=calls_progress_info))
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+                    prog='DataGenerator',
+                    description='Genera il dataset',
+                    )
+    parser.add_argument('--people', help='Size of people data set', required=True)
+    parser.add_argument('--cells', help='Size of cells data set', required=True)
+    parser.add_argument('--calls', help='Size of calls data set', required=True)
+    parser.add_argument('--call_min_lenght', help='Minimum duration of calls in seconds (default: 30)')
+    parser.add_argument('--call_max_duration', help='Max duration of calls in seconds (default: 3600)')
+
+    args = parser.parse_args()
+    print(args)
