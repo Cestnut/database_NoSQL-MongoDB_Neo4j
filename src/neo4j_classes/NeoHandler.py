@@ -5,11 +5,11 @@ from neo4j import GraphDatabase
 class NeoHandler:
     def __init__(self, begin, end, city, host="localhost", port=7687):
         
-        self.database = GraphDatabase.driver("bolt://{}:{}".format(host,port))
+        self.driver = GraphDatabase.driver("bolt://{}:{}".format(host,port))
 
-        self.inserter = NeoInsert(self.database)
-        self.reader = NeoRead(begin, end, city, self.database)
+        self.inserter = NeoInsert(self.driver)
+        self.reader = NeoRead(begin, end, city, self.driver)
 
     def clear_cache(self):
-        with self.database.session() as session:
+        with self.driver.session() as session:
             session.run("CALL db.clearQueryCaches()")
