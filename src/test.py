@@ -6,6 +6,7 @@ import utils
 import subprocess
 import os
 
+import ast
 import argparse
 
 #Distrugge i container e li ricrea, difatti cancellando il contenuto dei database e la cache
@@ -35,9 +36,9 @@ def read(database_handler, begin, end, city, iterations, nocache_time=False, deb
     for i in range(iterations):
         normal_iteration = list()
         for query in database_handler.reader.read_queries:
+            execution_time = database_handler.reader.read_query(query)
             j+=1
             print("Queried {} times".format(j))
-            execution_time = database_handler.reader.read_query(query)
             normal_iteration.append(execution_time)
         normal_times.append(normal_iteration)
 
@@ -76,7 +77,7 @@ if __name__ == "__main__":
     parser.add_argument('--neo4j', help='True/False, se si vogliono eseguire i test per Neo4j (default: True)')
     parser.add_argument('--mongo_insert_buffer_size', 
                         help="Dimensione del buffer su cui caricare i record prima che vengano inseriti nel database(default: 10000)")
-    parser.add_argument('--reset', help="True/False, se resettare i container all'avvio del test (default:True)")
+    parser.add_argument('--reset', help="True/False, se resettare i container all'avvio del test (default:False)")
     parser.add_argument('--nocache_time', help="True/False, se fare per la prima volta le query senza usare la cache (default:True)")
 
     args = parser.parse_args()
@@ -85,12 +86,12 @@ if __name__ == "__main__":
     end_timestamp = int(args.end_timestamp)
     city = args.city
     iterations = int(args.iterations)
-    debug = bool(args.debug) if args.debug else True
-    mongo = bool(args.mongo) if args.mongo else True
-    neo = bool(args.neo4j) if args.neo4j else True
+    debug = ast.literal_eval(args.debug) if args.debug else True
+    mongo = ast.literal_eval(args.mongo) if args.mongo else True
+    neo = ast.literal_eval(args.neo4j) if args.neo4j else True
     mongo_insert_buffer_size = int(args.mongo_insert_buffer_size) if args.mongo_insert_buffer_size else 10000
-    reset = bool(args.reset) if args.reset else True
-    nocache_time = bool(args.nocache_time) if args.nocache_time else True
+    reset = ast.literal_eval(args.reset) if args.reset else False
+    nocache_time = ast.literal_eval(args.nocache_time) if args.nocache_time else True
 
     if reset:
         reset_containers()
