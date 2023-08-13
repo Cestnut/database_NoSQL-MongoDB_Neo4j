@@ -6,8 +6,9 @@ import argparse
 import utils
 
 class DataGenerator:
-    def __init__(self, root_path, calls_set_size = 1000, people_set_size = 50, cells_set_size = 50, 
-                 calls_min_duration=30, calls_max_duration=3600):
+    def __init__(self, root_path, people_set_size, cells_set_size, calls_set_size, 
+                 call_begin_range, call_end_range,  
+                 calls_min_duration, calls_max_duration):
         
         self.calls_set_size = calls_set_size #Numero di chiamate
         self.people_set_size = people_set_size
@@ -15,8 +16,8 @@ class DataGenerator:
 
         self.calls_min_duration = calls_min_duration #Durata minima delle chiamate in secondi
         self.calls_max_duration = calls_max_duration #Durata massima delle chiamate in secondi
-        self.call_begin_range = datetime(2023, 1, 1) #Inizio range dell'inizio delle chiamate. Formato: Y/M/S
-        self.call_end_range = datetime(2023, 12, 31)
+        self.call_begin_range = call_begin_range
+        self.call_end_range = call_end_range
 
         self.phone_numbers = list() #Lista di tutti i numeri di telefono generati. Servirà a generare le chiamate
 
@@ -123,11 +124,26 @@ if __name__ == "__main__":
                     prog='DataGenerator',
                     description='Genera il dataset',
                     )
-    parser.add_argument('--people', help='Size of people data set', required=True)
-    parser.add_argument('--cells', help='Size of cells data set', required=True)
-    parser.add_argument('--calls', help='Size of calls data set', required=True)
-    parser.add_argument('--call_min_lenght', help='Minimum duration of calls in seconds (default: 30)')
-    parser.add_argument('--call_max_duration', help='Max duration of calls in seconds (default: 3600)')
-
+    parser.add_argument('--people', help='Dimensione del dataset people', required=True)
+    parser.add_argument('--cells', help='Dimensione del dataset cells', required=True)
+    parser.add_argument('--calls', help='Dimensione del dataset calls', required=True)
+    parser.add_argument('--begin_date', help="Data dopo la quale sono avvenute tutte le telefonate (formato YYYY/MM/DD)", required=True)
+    parser.add_argument('--end_date', help="Data prima delle quale sono partite tutte le chiamate (formato YYYY/MM/DD)", required=True)
+    parser.add_argument('--calls_min_duration', help='Durata minima delle chiamate in secondi (default: 30)')
+    parser.add_argument('--calls_max_duration', help='Durata massima delle chiamate in secondi (default: 3600)')
+    
     args = parser.parse_args()
-    print(args)
+    people_set_size = int(args.people)
+    cells_set_size = int(args.cells)
+    calls_set_size = int(args.calls)
+
+    begin_date = utils.parse_date(args.begin_date)
+    end_date = utils.parse_date(args.end_date)
+
+    calls_min_duration = args.calls_min_duration if args.calls_min_duration else 30
+    calls_max_duration = args.calls_max_duration if args.calls_max_duration else 3600
+
+    data_generator = DataGenerator(utils.root_path, people_set_size, cells_set_size, calls_set_size,
+                                   begin_date, end_date,
+                                   calls_min_duration, calls_max_duration)
+    data_generator.generate()
