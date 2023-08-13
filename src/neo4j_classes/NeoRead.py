@@ -1,5 +1,4 @@
-from neo4j import GraphDatabase
-from time import process_time_ns
+from time import time_ns
 
 class NeoRead:
     def __init__(self, begin, end, city, driver):
@@ -40,9 +39,9 @@ class NeoRead:
     #Ritorna il tempo di esecuzione della query in millisecondi
     def read_query(self, query):
         with self.driver.session() as session:
-            begin_time = process_time_ns()
+            begin_time = time_ns()
             session.run(query)
-            end_time = process_time_ns()
+            end_time = time_ns()
             time_elapsed = (end_time-begin_time)//(10**6)
             return time_elapsed
         
