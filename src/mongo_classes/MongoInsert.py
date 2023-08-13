@@ -32,7 +32,7 @@ class MongoInsert:
             data_collection.insert_many(data)
             
         if debug:
-            print("Popolata la collezione {}".format(collection_name))
+            print("Popolata la collezione {}\n\n".format(collection_name))
 
     def insert_all_data(self, debug = True):
 
