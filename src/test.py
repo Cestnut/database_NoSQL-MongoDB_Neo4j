@@ -6,8 +6,10 @@ import utils
 import subprocess
 import os
 
+import argparse
+
 #Distrugge i container e li ricrea, difatti cancellando il contenuto dei database e la cache
-def reset():
+def reset_containers():
     p = subprocess.Popen([utils.root_path+"/start.sh"], shell=True)
     p.wait()
 
@@ -58,27 +60,49 @@ def write_results(dbms, times):
     if len(normal_times) > 1:
         utils.write_csv(results_path+"/cache", normal_times)
 
-mongo_insert_buffer_size = 0
+if __name__ == "__main__":
 
-begin = 0
-end = 2000000000000000
-city = "Imperia"
-debug = True
-iterations = 30
-nocache_time = True
-mongo=True
-neo=True
+    parser = argparse.ArgumentParser(
+                    prog='Test',
+                    description='Esegue i test delle query e salva i risultati',
+                    )
+    
+    parser.add_argument('--begin_timestamp', help='Inizio del range di timestamp in cui cercare le chiamate', required=True)
+    parser.add_argument('--end_timestamp', help='Fine del range di timestamp in cui cercare le chiamate', required=True)
+    parser.add_argument('--city', help='Città delle celle da cui sono partite le chiamate', required=True)
+    parser.add_argument('--iterations', help="Numero di iterazioni da eseguire", required=True)
+    parser.add_argument('--debug', help="Se si vogliono attivare le informazioni di debug (default: True)")
+    parser.add_argument('--mongo', help='True/False, se si vogliono eseguire i test per MongoDB (default: True)')
+    parser.add_argument('--neo4j', help='True/False, se si vogliono eseguire i test per Neo4j (default: True)')
+    parser.add_argument('--mongo_insert_buffer_size', 
+                        help="Dimensione del buffer su cui caricare i record prima che vengano inseriti nel database(default: 10000)")
+    parser.add_argument('--reset', help="True/False, se resettare i container all'avvio del test (default:True)")
+    parser.add_argument('--nocache_time', help="True/False, se fare per la prima volta le query senza usare la cache (default:True)")
 
-reset()
+    args = parser.parse_args()
 
-if mongo:
-    mongo_handler = MongoHandler(begin, end, city, utils.root_path, insert_buffer_size=mongo_insert_buffer_size)
-    insert_data(mongo_handler, debug=debug)
-    result = read(mongo_handler, begin, end, city, iterations, nocache_time=nocache_time, debug=debug)
-    write_results("mongo", result)
+    begin_timestamp = int(args.begin_timestamp)
+    end_timestamp = int(args.end_timestamp)
+    city = args.city
+    iterations = int(args.iterations)
+    debug = bool(args.debug) if args.debug else True
+    mongo = bool(args.mongo) if args.mongo else True
+    neo = bool(args.neo4j) if args.neo4j else True
+    mongo_insert_buffer_size = int(args.mongo_insert_buffer_size) if args.mongo_insert_buffer_size else 10000
+    reset = bool(args.reset) if args.reset else True
+    nocache_time = bool(args.nocache_time) if args.nocache_time else True
 
-if neo:
-    neo_handler = NeoHandler(begin, end, city)
-    insert_data(neo_handler, debug=debug)
-    result = read(neo_handler, begin, end, city, iterations, nocache_time=nocache_time, debug=debug)
-    write_results("neo4j", result)
+    if reset:
+        reset_containers()
+
+    if mongo:
+        mongo_handler = MongoHandler(begin_timestamp, end_timestamp, city, utils.root_path, insert_buffer_size=mongo_insert_buffer_size)
+        insert_data(mongo_handler, debug=debug)
+        result = read(mongo_handler, begin_timestamp, end_timestamp, city, iterations, nocache_time=nocache_time, debug=debug)
+        write_results("mongo", result)
+
+    if neo:
+        neo_handler = NeoHandler(begin_timestamp, end_timestamp, city)
+        insert_data(neo_handler, debug=debug)
+        result = read(neo_handler, begin_timestamp, end_timestamp, city, iterations, nocache_time=nocache_time, debug=debug)
+        write_results("neo4j", result)
