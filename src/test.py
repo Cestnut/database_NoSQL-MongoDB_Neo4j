@@ -70,7 +70,7 @@ if __name__ == "__main__":
     parser.add_argument('--begin_timestamp', help='Inizio del range di timestamp in cui cercare le chiamate', required=True)
     parser.add_argument('--end_timestamp', help='Fine del range di timestamp in cui cercare le chiamate', required=True)
     parser.add_argument('--city', help='Città delle celle da cui sono partite le chiamate', required=True)
-    parser.add_argument('--iterations', help="Numero di iterazioni da eseguire", required=True)
+    parser.add_argument('--iterations', help="Numero di iterazioni da eseguire (default: 30)")
     parser.add_argument('--debug', help="Se si vogliono attivare le informazioni di debug (default: True)")
     parser.add_argument('--mongo', help='True/False, se si vogliono eseguire i test per MongoDB (default: True)')
     parser.add_argument('--neo4j', help='True/False, se si vogliono eseguire i test per Neo4j (default: True)')
@@ -84,7 +84,7 @@ if __name__ == "__main__":
     begin_timestamp = int(args.begin_timestamp)
     end_timestamp = int(args.end_timestamp)
     city = args.city
-    iterations = int(args.iterations)
+    iterations = int(args.iterations) if args.iterations else 30
     debug = ast.literal_eval(args.debug) if args.debug else True
     mongo = ast.literal_eval(args.mongo) if args.mongo else True
     neo = ast.literal_eval(args.neo4j) if args.neo4j else True
