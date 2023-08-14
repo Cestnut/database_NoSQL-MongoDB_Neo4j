@@ -115,5 +115,4 @@ class MongoRead:
         self.calls_collection.aggregate(query)
         end_time = time_ns()
         time_elapsed = (end_time-begin_time)//(10**6)
-        print("{} ms".format(time_elapsed))
         return time_elapsed
