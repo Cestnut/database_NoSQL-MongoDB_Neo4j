@@ -1,8 +1,8 @@
-from neo4j import GraphDatabase
-
+from .neo_utils import neo_utils
 class NeoInsert:
-    def __init__(self, driver):
+    def __init__(self, driver, session_timeout):
         self.driver = driver
+        self.session_timeout = session_timeout
 
     def init_queries(self):
         insert = """
@@ -65,23 +65,24 @@ class NeoInsert:
         
 
     def clear_database(self, debug):
-        with self.driver.session() as session:
-
-            result = session.run(self.delete_query)
-            if debug:
-                print(result.consume().counters)
+        session = neo_utils.create_session(self.driver, self.session_timeout)
+        result = session.run(self.delete_query)
+        if debug:
+            print(result.consume().counters)
+        session.close()
 
     def insert_all_data(self, debug=True):
         self.init_queries()
         self.clear_database(debug)
 
-        with self.driver.session() as session:
-            if debug: print("Creando gli indici")
-            for query in self.create_index_queries:
-                session.run(query)
+        session = neo_utils.create_session(self.driver, self.session_timeout)
+        if debug: print("Creando gli indici")
+        for query in self.create_index_queries:
+            session.run(query)
             
-            if debug: print("Inserendo i dati")
-            for query in self.queries:
-                result=session.run(query)
-                if debug:
-                    print(result.consume().counters)
+        if debug: print("Inserendo i dati")
+        for query in self.queries:
+            result=session.run(query)
+            if debug:
+                print(result.consume().counters)        
+        session.close()

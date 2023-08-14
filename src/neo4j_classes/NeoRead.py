@@ -1,8 +1,9 @@
 from time import time_ns
-
+from .neo_utils import neo_utils
 class NeoRead:
-    def __init__(self, begin, end, city, driver):
+    def __init__(self, begin, end, city, driver, session_timeout):
         self.driver = driver
+        self.session_timeout = session_timeout
         self.init_queries(begin, end, city)
 
     def init_queries(self, begin, end, city):
@@ -38,10 +39,11 @@ class NeoRead:
 
     #Ritorna il tempo di esecuzione della query in millisecondi
     def read_query(self, query):
-        with self.driver.session() as session:
-            begin_time = time_ns()
-            session.run(query)
-            end_time = time_ns()
-            time_elapsed = (end_time-begin_time)//(10**6)
-            return time_elapsed
+        session = neo_utils.create_session(self.driver, self.session_timeout)
+        begin_time = time_ns()
+        session.run(query)
+        end_time = time_ns()
+        time_elapsed = (end_time-begin_time)//(10**6)
+        session.close()
+        return time_elapsed
         
