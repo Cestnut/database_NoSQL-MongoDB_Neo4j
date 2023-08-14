@@ -1,4 +1,4 @@
-import pymongo
+import utils
 import csv
 
 class MongoInsert:
@@ -82,7 +82,7 @@ class MongoInsert:
         calls_collection.create_index("CITY")
 
 
-        self.insert_many(self.root_path+"/csv/people.csv", people_collection, "people", debug)
-        self.insert_many(self.root_path+"/csv/cells.csv", cells_collection, "cells", debug)
-        self.insert_many(self.root_path+"/csv/calls.csv", calls_collection, "calls", debug)
+        self.insert_many(utils.input_csv+"/people.csv", people_collection, "people", debug)
+        self.insert_many(utils.input_csv+"/cells.csv", cells_collection, "cells", debug)
+        self.insert_many(utils.input_csv+"/calls.csv", calls_collection, "calls", debug)
         self.denormalize_calls_with_cells(calls_collection, debug)
