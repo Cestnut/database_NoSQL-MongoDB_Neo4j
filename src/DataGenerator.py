@@ -21,7 +21,7 @@ class DataGenerator:
 
         self.phone_numbers = list() #Lista di tutti i numeri di telefono generati. Servirà a generare le chiamate
 
-        self.data_path = root_path+"/csv/" #Path in cui sono scritti i file csv
+        self.data_path = root_path+"/csv_original/" #Path in cui sono scritti i file csv
 
         Faker.seed(0)
         self.fake = Faker('it_IT')
@@ -111,12 +111,12 @@ class DataGenerator:
 
     def generate(self, people_progress_info=False, cells_progress_info=False, 
                  calls_progress_info=False):
-        if not os.path.exists(self.data_path):
-            os.makedirs(self.data_path)
+        if not os.path.exists(utils.original_csv):
+            os.makedirs(utils.original_csv)
         
-        utils.write_csv(self.data_path+"/people", self.generate_people(progress_info=people_progress_info))
-        utils.write_csv(self.data_path+"cells", self.generate_cells(progress_info=cells_progress_info))
-        utils.write_csv(self.data_path+"calls", self.generate_calls(progress_info=calls_progress_info))
+        utils.write_csv(utils.original_csv+"/people", self.generate_people(progress_info=people_progress_info))
+        utils.write_csv(utils.original_csv+"/cells", self.generate_cells(progress_info=cells_progress_info))
+        utils.write_csv(utils.original_csv+"/calls", self.generate_calls(progress_info=calls_progress_info))
 
 
 if __name__ == "__main__":

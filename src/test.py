@@ -92,17 +92,19 @@ if __name__ == "__main__":
     reset = ast.literal_eval(args.reset) if args.reset else False
     nocache_time = ast.literal_eval(args.nocache_time) if args.nocache_time else True
 
-    if reset:
+    data_set_percentage = [25,50,75,100]
+    for percentage in data_set_percentage:
         reset_containers()
+        utils.copy_dataset(percentage, debug)
 
-    if mongo:
-        mongo_handler = MongoHandler(begin_timestamp, end_timestamp, city, utils.root_path, insert_buffer_size=mongo_insert_buffer_size)
-        insert_data(mongo_handler, debug=debug)
-        result = read(mongo_handler, begin_timestamp, end_timestamp, city, iterations, nocache_time=nocache_time, debug=debug)
-        write_results("mongo", result)
+        if mongo:
+            mongo_handler = MongoHandler(begin_timestamp, end_timestamp, city, utils.root_path, insert_buffer_size=mongo_insert_buffer_size)
+            insert_data(mongo_handler, debug=debug)
+            result = read(mongo_handler, begin_timestamp, end_timestamp, city, iterations, nocache_time=nocache_time, debug=debug)
+            write_results("mongo_"+str(percentage), result)
 
-    if neo:
-        neo_handler = NeoHandler(begin_timestamp, end_timestamp, city)
-        insert_data(neo_handler, debug=debug)
-        result = read(neo_handler, begin_timestamp, end_timestamp, city, iterations, nocache_time=nocache_time, debug=debug)
-        write_results("neo4j", result)
+        if neo:
+            neo_handler = NeoHandler(begin_timestamp, end_timestamp, city)
+            insert_data(neo_handler, debug=debug)
+            result = read(neo_handler, begin_timestamp, end_timestamp, city, iterations, nocache_time=nocache_time, debug=debug)
+            write_results("neo4j_"+str(percentage), result)

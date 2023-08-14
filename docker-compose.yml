@@ -13,5 +13,5 @@ services:
     environment:
       - "NEO4J_AUTH=none"
     volumes:
-      - ./csv/:/var/lib/neo4j/import/
+      - ./csv/input_csv/:/var/lib/neo4j/import/
     user: "${UID}:${GID}"
