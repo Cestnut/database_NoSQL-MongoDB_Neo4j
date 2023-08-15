@@ -17,9 +17,10 @@ class MongoInsert:
             reader = csv.DictReader(csvfile)
             for row in reader:
                 for key in row.keys():
-                    #Converte le stringhe contenenti numeri in interi
+                    #Converte le stringhe sotto i campi specificati in interi
                     value = row[key]
-                    row[key] = int(value) if value.isnumeric() else value
+                    if key in ["ID", "CELL_ID", "BEGIN_TIMESTAMP", "END_TIMESTAMP"]:
+                        row[key] = int(value)
                 data.append(row)
                 i = i + 1
                 #Permette di svuotare la lista data ogni self.buffer_size elementi caricati, in modo da non appesantire troppo la memoria
@@ -63,17 +64,18 @@ class MongoInsert:
 
     def clear_database(self, debug):
         for collection_name in self.database.list_collection_names():
+            print("Eliminando")
             result = self.database[collection_name].delete_many({})
             if debug:
                 print("Eliminati {} documenti dalla collection {}".format(result.deleted_count, collection_name))
 
     def insert_all_data(self, debug = True):
-
-        self.clear_database(debug)
-
+        
         people_collection = self.database["people"]
         cells_collection = self.database["cells"]
         calls_collection = self.database["calls"]
+
+        self.clear_database(debug)
 
         if debug: print("Creando gli indici")
         people_collection.create_index("NUMBER", unique=True)
