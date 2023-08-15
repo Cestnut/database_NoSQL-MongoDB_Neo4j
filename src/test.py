@@ -22,7 +22,7 @@ def read(database_handler, begin, end, city, iterations, nocache_time=False, deb
     normal_times = list()
     j = 0
     if nocache_time:
-        no_cache_times.append(["QUERY 1", "QUERY 2", "QUERY 3","QUERY 4","QUERY 5"])
+        no_cache_times.append(["QUERY_1", "QUERY_2", "QUERY_3","QUERY_4","QUERY_5"])
         no_cache_tmp = list()
         for query in database_handler.reader.read_queries:
             database_handler.clear_cache()
@@ -32,7 +32,7 @@ def read(database_handler, begin, end, city, iterations, nocache_time=False, deb
             no_cache_tmp.append(execution_time)
         no_cache_times.append(no_cache_tmp)
 
-    normal_times.append(["QUERY 1", "QUERY 2", "QUERY 3","QUERY 4","QUERY 5"])
+    normal_times.append(["QUERY_1", "QUERY_2", "QUERY_3","QUERY_4","QUERY_5"])
     for i in range(iterations):
         normal_iteration = list()
         for query in database_handler.reader.read_queries:
@@ -44,26 +44,7 @@ def read(database_handler, begin, end, city, iterations, nocache_time=False, deb
 
     return no_cache_times, normal_times
 
-def write_results(dbms, size_percentage, times):
-    no_cache_times = times[0]
-    normal_times = times[1]
-    results_path = utils.root_path + "/results/" + dbms
-    results_path_nocache = results_path + "/nocache/"
-    results_path_cache = results_path + "/cache/"
-    
-    if not os.path.exists(results_path_nocache):
-            os.makedirs(results_path_nocache)
 
-    if not os.path.exists(results_path_cache):
-            os.makedirs(results_path_cache)    
-
-    #Controlla se ci siano altri campi oltre agli header
-    if len(no_cache_times) > 1:
-        utils.write_csv(results_path_nocache+dbms+str(size_percentage), no_cache_times)
-    
-    #Controlla se ci siano altri campi oltre agli header
-    if len(normal_times) > 1:
-        utils.write_csv(results_path_cache+dbms+str(size_percentage), normal_times)
 
 if __name__ == "__main__":
 
@@ -106,10 +87,13 @@ if __name__ == "__main__":
             mongo_handler = MongoHandler(begin_timestamp, end_timestamp, city, utils.root_path, insert_buffer_size=mongo_insert_buffer_size)
             insert_data(mongo_handler, debug=debug)
             result = read(mongo_handler, begin_timestamp, end_timestamp, city, iterations, nocache_time=nocache_time, debug=debug)
-            write_results("mongo", percentage, result)
+            utils.write_results("mongo", percentage, result)
+            utils.rearrange_results("mongo")
+
 
         if neo:
             neo_handler = NeoHandler(begin_timestamp, end_timestamp, city)
             insert_data(neo_handler, debug=debug)
             result = read(neo_handler, begin_timestamp, end_timestamp, city, iterations, nocache_time=nocache_time, debug=debug)
-            write_results("neo4j", percentage, result)
+            utils.write_results("neo4j", percentage, result)
+            utils.rearrange_results("neo4j")
