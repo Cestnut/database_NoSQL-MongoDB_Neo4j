@@ -44,21 +44,26 @@ def read(database_handler, begin, end, city, iterations, nocache_time=False, deb
 
     return no_cache_times, normal_times
 
-def write_results(dbms, times):
+def write_results(dbms, size_percentage, times):
     no_cache_times = times[0]
     normal_times = times[1]
     results_path = utils.root_path + "/results/" + dbms
+    results_path_nocache = results_path + "/nocache/"
+    results_path_cache = results_path + "/cache/"
+    
+    if not os.path.exists(results_path_nocache):
+            os.makedirs(results_path_nocache)
 
-    if not os.path.exists(results_path):
-            os.makedirs(results_path)
+    if not os.path.exists(results_path_cache):
+            os.makedirs(results_path_cache)    
 
     #Controlla se ci siano altri campi oltre agli header
     if len(no_cache_times) > 1:
-        utils.write_csv(results_path+"/nocache", no_cache_times)
+        utils.write_csv(results_path_nocache+dbms+str(size_percentage), no_cache_times)
     
     #Controlla se ci siano altri campi oltre agli header
     if len(normal_times) > 1:
-        utils.write_csv(results_path+"/cache", normal_times)
+        utils.write_csv(results_path_cache+dbms+str(size_percentage), normal_times)
 
 if __name__ == "__main__":
 
@@ -101,10 +106,10 @@ if __name__ == "__main__":
             mongo_handler = MongoHandler(begin_timestamp, end_timestamp, city, utils.root_path, insert_buffer_size=mongo_insert_buffer_size)
             insert_data(mongo_handler, debug=debug)
             result = read(mongo_handler, begin_timestamp, end_timestamp, city, iterations, nocache_time=nocache_time, debug=debug)
-            write_results("mongo_"+str(percentage), result)
+            write_results("mongo", percentage, result)
 
         if neo:
             neo_handler = NeoHandler(begin_timestamp, end_timestamp, city)
             insert_data(neo_handler, debug=debug)
             result = read(neo_handler, begin_timestamp, end_timestamp, city, iterations, nocache_time=nocache_time, debug=debug)
-            write_results("neo4j_"+str(percentage), result)
+            write_results("neo4j", percentage, result)
