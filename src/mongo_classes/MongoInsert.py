@@ -29,7 +29,7 @@ class MongoInsert:
                         data_collection.insert_many(data)
                         data = list()
         #Inserisce alla fine tutti i dati che non sono ancora stati aggiunti (tutti se il buffer era 0)
-        data_collection.insert_many(data)
+        if len(data)>0: data_collection.insert_many(data)
             
         if debug:
             print("Popolata la collezione {}\n\n".format(collection_name))
