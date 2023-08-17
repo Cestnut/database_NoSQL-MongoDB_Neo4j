@@ -20,25 +20,31 @@ def insert_data(database_handler, buffer_size=0, debug=True):
 def read(database_handler, begin, end, city, iterations, nocache_time=False, debug=True):
     no_cache_times = list()
     normal_times = list()
-    j = 0
     if nocache_time:
         no_cache_times.append(["QUERY_1", "QUERY_2", "QUERY_3","QUERY_4","QUERY_5"])
         no_cache_tmp = list()
+        i = 1
         for query in database_handler.reader.read_queries:
             database_handler.clear_cache()
             execution_time = database_handler.reader.read_query(query)
-            j+=1
-            print("Queried {} times".format(j))
+            print("Query eseguite (no cache): {}".format(i))
+            i+=1
             no_cache_tmp.append(execution_time)
         no_cache_times.append(no_cache_tmp)
+        
+    #Il seguente serve per popolare la cache delle query
+    i = 1
+    for query in database_handler.reader.read_queries:
+        database_handler.reader.read_query(query)
+        print("Query eseguite (popolando la cache): {}".format(i))
+        i+=1
 
     normal_times.append(["QUERY_1", "QUERY_2", "QUERY_3","QUERY_4","QUERY_5"])
     for i in range(iterations):
         normal_iteration = list()
         for query in database_handler.reader.read_queries:
             execution_time = database_handler.reader.read_query(query)
-            j+=1
-            print("Queried {} times".format(j))
+            print("Query eseguite: {}".format(i+1))
             normal_iteration.append(execution_time)
         normal_times.append(normal_iteration)
 
