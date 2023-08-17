@@ -46,7 +46,7 @@ def copy_dataset(percentage, debug):
 def write_results(dbms, size_percentage, times):
     no_cache_times = times[0]
     normal_times = times[1]
-    results_path = results_csv + "/original" + dbms
+    results_path = results_csv + "/original/" + dbms
     results_path_nocache = results_path + "/nocache/"
     results_path_cache = results_path + "/cache/"
     
