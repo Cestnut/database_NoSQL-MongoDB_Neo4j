@@ -6,7 +6,7 @@ class NeoHandler:
     def __init__(self, begin, end, city, host="localhost", port=7687, timeout=60):
         
         self.driver = GraphDatabase.driver("bolt://{}:{}".format(host,port))
-        self.session_timeout = 60
+        self.session_timeout = timeout
 
         self.inserter = NeoInsert(self.driver, timeout)
         self.reader = NeoRead(begin, end, city, self.driver, self.session_timeout)

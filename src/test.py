@@ -40,11 +40,13 @@ def read(database_handler, begin, end, city, iterations, nocache_time=False, deb
         i+=1
 
     normal_times.append(["QUERY_1", "QUERY_2", "QUERY_3","QUERY_4","QUERY_5"])
+    j = 1
     for i in range(iterations):
         normal_iteration = list()
         for query in database_handler.reader.read_queries:
             execution_time = database_handler.reader.read_query(query)
-            print("Query eseguite: {}".format(i+1))
+            print("Query eseguite: {}".format(j))
+            j+=1
             normal_iteration.append(execution_time)
         normal_times.append(normal_iteration)
 
@@ -98,7 +100,7 @@ if __name__ == "__main__":
 
 
         if neo:
-            neo_handler = NeoHandler(begin_timestamp, end_timestamp, city)
+            neo_handler = NeoHandler(begin_timestamp, end_timestamp, city, timeout=120)
             insert_data(neo_handler, debug=debug)
             result = read(neo_handler, begin_timestamp, end_timestamp, city, iterations, nocache_time=nocache_time, debug=debug)
             utils.write_results("neo4j", percentage, result)
