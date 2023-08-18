@@ -13,11 +13,8 @@ class MongoHandler:
         self.reader = MongoRead(begin, end, city, self.database)
 
     def clear_cache(self):
-        self.database.command(
-            {
-                "planCacheClear": "people",
-                "planCacheClear": "cells",
-                "planCacheClear": "calls"
-            }
-        )
+        self.database.command("planCacheClear", "people")
+        self.database.command("planCacheClear", "cells")
+        self.database.command("planCacheClear", "calls")
+
         
