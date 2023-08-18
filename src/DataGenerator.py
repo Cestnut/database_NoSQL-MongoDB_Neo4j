@@ -109,14 +109,14 @@ class DataGenerator:
                     print("Generazione chiamate: {}%".format(percentage))
         return calls
 
-    def generate(self, people_progress_info=False, cells_progress_info=False, 
+    def generate(self, size, people_progress_info=False, cells_progress_info=False, 
                  calls_progress_info=False):
         if not os.path.exists(utils.original_csv):
             os.makedirs(utils.original_csv)
         
-        utils.write_csv(utils.original_csv+"/people", self.generate_people(progress_info=people_progress_info))
-        utils.write_csv(utils.original_csv+"/cells", self.generate_cells(progress_info=cells_progress_info))
-        utils.write_csv(utils.original_csv+"/calls", self.generate_calls(progress_info=calls_progress_info))
+        utils.write_csv(utils.original_csv+"/people"+str(size), self.generate_people(progress_info=people_progress_info))
+        utils.write_csv(utils.original_csv+"/cells"+str(size), self.generate_cells(progress_info=cells_progress_info))
+        utils.write_csv(utils.original_csv+"/calls"+str(size), self.generate_calls(progress_info=calls_progress_info))
 
 
 if __name__ == "__main__":
@@ -133,9 +133,9 @@ if __name__ == "__main__":
     parser.add_argument('--calls_max_duration', help='Durata massima delle chiamate in secondi (default: 3600)')
     
     args = parser.parse_args()
-    people_set_size = int(args.people)
-    cells_set_size = int(args.cells)
-    calls_set_size = int(args.calls)
+    original_people_set_size = int(args.people)
+    original_cells_set_size = int(args.cells)
+    original_calls_set_size = int(args.calls)
 
     begin_date = utils.parse_date(args.begin_date)
     end_date = utils.parse_date(args.end_date)
@@ -143,8 +143,16 @@ if __name__ == "__main__":
     calls_min_duration = args.calls_min_duration if args.calls_min_duration else 30
     calls_max_duration = args.calls_max_duration if args.calls_max_duration else 3600
 
-    data_generator = DataGenerator(utils.root_path, people_set_size, cells_set_size, calls_set_size,
+    
+    
+    sizes = [25,50,75,100]
+    for size in sizes:
+
+        people_set_size = int(original_people_set_size*size/100)
+        cells_set_size = int(original_cells_set_size*size/100)
+        calls_set_size = int(original_calls_set_size*size/100)
+
+        data_generator = DataGenerator(utils.root_path, people_set_size, cells_set_size, calls_set_size,
                                    begin_date, end_date,
                                    calls_min_duration, calls_max_duration)
-    
-    data_generator.generate(people_progress_info=True, cells_progress_info=True, calls_progress_info=True)
+        data_generator.generate(size, people_progress_info=True, cells_progress_info=True, calls_progress_info=True)
