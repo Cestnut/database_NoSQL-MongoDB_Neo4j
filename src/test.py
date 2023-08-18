@@ -85,7 +85,7 @@ if __name__ == "__main__":
     neo = ast.literal_eval(args.neo4j) if args.neo4j else True
     mongo_insert_buffer_size = int(args.mongo_insert_buffer_size) if args.mongo_insert_buffer_size else 10000
     reset = ast.literal_eval(args.reset) if args.reset else False
-    onlycache_time = ast.literal_eval(args.onlycache_time) if args.onlycache_time else True
+    onlycache_time = ast.literal_eval(args.onlycache_time) if args.onlycache_time else False
 
     data_set_percentage = [25,50,75,100]
     for percentage in data_set_percentage:
